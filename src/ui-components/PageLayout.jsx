@@ -1,16 +1,14 @@
-import Typography from "@material-ui/core/Typography";
 import NavBar from "./NavBar";
+import { Box } from "@chakra-ui/react"
 
 export const PageLayout = (props) => {
     return (
         <>
-            <NavBar />
-            <Typography variant="h5">
-                <center>Welcome to the Microsoft Authentication Library For React Quickstart</center>
-            </Typography>
-            <br/>
-            <br/>
-            {props.children}
+            <Box w="100vw" h="100vh" bgGradient="linear(to-tl, brand.900, brand.800)">
+                <NavBar />
+                <br />
+                {props.children}
+            </Box>
         </>
     );
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
-import Typography from "@material-ui/core/Typography";
+import { Text } from "@chakra-ui/react";
 
-const WelcomeName = () => {
+export const WelcomeName = () => {
     const { accounts } = useMsal();
     const [name, setName] = useState(null);
 
@@ -13,10 +13,9 @@ const WelcomeName = () => {
     }, [accounts]);
 
     if (name) {
-        return <Typography variant="h6">Welcome, {name}</Typography>;
+        
+        return <Text fontSize="lg">Welcome, {name}</Text>;
     } else {
         return null;
     }
 };
-
-export default WelcomeName;

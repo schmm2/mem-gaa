@@ -15,7 +15,8 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 export const msalConfig = {
     auth: {
         clientId: "67143d8e-374a-488d-b977-e4af2a3d534d",
-        redirectUri: "/",
+        redirectUri: "/groupoverview",
+        navigateToLoginRequestUrl:false,
         postLogoutRedirectUri: "/"
     },
     cache: {
@@ -51,9 +52,4 @@ export const msalConfig = {
 // Add here scopes for id token to be used at MS Identity Platform endpoints.
 export const loginRequest = {
     scopes: ["User.Read"]
-};
-
-// Add here the endpoints for MS Graph API services you would like to use.
-export const graphConfig = {
-    graphMeEndpoint: "https://graph.microsoft.com/v1.0/me"
 };

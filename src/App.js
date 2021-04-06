@@ -1,19 +1,14 @@
 import { Switch, Route, useHistory } from "react-router-dom";
-// Material-UI imports
-import Grid from "@material-ui/core/Grid";
 
 // MSAL imports
 import { MsalProvider } from "@azure/msal-react";
 import { CustomNavigationClient } from "./utils/NavigationClient";
 
-// Sample app imports
+// ui-components
 import { PageLayout } from "./ui-components/PageLayout";
-import { Home } from "./pages/Home";
-import { Profile } from "./pages/Profile";
 
-// Class-based equivalents of "Profile" component
-import { ProfileWithMsal } from "./pages/ProfileWithMsal";
-import { ProfileRawContext } from "./pages/ProfileRawContext";
+// pages
+import { Home } from "./pages/Home";
 import { GroupOverview } from "./pages/GroupOverview";
 
 function App({ pca }) {
@@ -25,9 +20,7 @@ function App({ pca }) {
   return (
     <MsalProvider instance={pca}>
       <PageLayout>
-        <Grid container justify="center">
-          <Pages />
-        </Grid>
+        <Pages />
       </PageLayout>
     </MsalProvider>
   );
@@ -36,17 +29,8 @@ function App({ pca }) {
 function Pages() {
   return (
     <Switch>
-      <Route path="/profile">
-        <Profile />
-      </Route>
       <Route path="/groupOverview">
         <GroupOverview />
-      </Route>
-      <Route path="/profileWithMsal">
-        <ProfileWithMsal />
-      </Route>
-      <Route path="/profileRawContext">
-        <ProfileRawContext />
       </Route>
       <Route path="/">
         <Home />

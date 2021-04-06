@@ -4,8 +4,11 @@ import ReactFlow, {
     addEdge,
     removeElements,
     isNode,
+    Controls,
 } from 'react-flow-renderer';
 import dagre from 'dagre';
+
+import './GroupOverview.css'
 
 // Msal imports
 import { MsalAuthenticationTemplate, useMsal } from "@azure/msal-react";
@@ -191,19 +194,21 @@ export function GroupOverview() {
 
     return (
         <MsalAuthenticationTemplate
-            interactionType={InteractionType.Popup}
+            interactionType={InteractionType.Redirect}
             authenticationRequest={authRequest}
             errorComponent={ErrorComponent}
             loadingComponent={Loading}
         >
 
-        {
-            reactFlowElements && reactFlowElements.length > 0 &&
-            <div style={{ height: 1000, width: 1000 }}>
-                <ReactFlow elements={reactFlowElements}></ReactFlow>
-            </div>
-        }
-        
+            {
+                reactFlowElements && reactFlowElements.length > 0 &&
+                <div className="reactFlowContainer">
+                    <ReactFlow elements={reactFlowElements}>
+                        <Controls />
+                    </ReactFlow>
+                </div>
+            }
+
         </MsalAuthenticationTemplate>
     )
 };

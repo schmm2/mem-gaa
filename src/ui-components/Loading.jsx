@@ -1,5 +1,5 @@
-import { Typography } from "@material-ui/core";
+import { Text } from "@chakra-ui/react"
 
 export const Loading = () => {
-    return <Typography variant="h6">Authentication in progress...</Typography>
+    return <Text fontSize="lg">Authentication in progress...</Text>
 }

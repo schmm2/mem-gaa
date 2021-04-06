@@ -1,5 +1,5 @@
-import { Typography } from "@material-ui/core";
+import { Text } from "@chakra-ui/react"
 
 export const ErrorComponent = ({error}) => {
-    return <Typography variant="h6">An Error Occurred: {error.errorCode}</Typography>;
+    return <Text fontSize="lg">An Error Occurred: {error.errorCode}</Text>;
 }
