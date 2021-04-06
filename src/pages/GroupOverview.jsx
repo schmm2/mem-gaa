@@ -1,4 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import ReactFlow, {
+    ReactFlowProvider,
+    addEdge,
+    removeElements,
+    isNode,
+} from 'react-flow-renderer';
+import dagre from 'dagre';
 
 // Msal imports
 import { MsalAuthenticationTemplate, useMsal } from "@azure/msal-react";
@@ -10,8 +17,11 @@ import { Loading } from "../ui-components/Loading";
 import { ErrorComponent } from "../ui-components/ErrorComponent";
 import { callMsGraph } from "../utils/MsGraphApiCall";
 
-// Material-ui imports
-import Paper from "@material-ui/core/Paper";
+const dagreGraph = new dagre.graphlib.Graph();
+dagreGraph.setDefaultEdgeLabel(() => ({}));
+
+const nodeWidth = 172;
+const nodeHeight = 36;
 
 // Resources like configurations, apps...
 const graphApiResourceUrls = [
@@ -19,30 +29,92 @@ const graphApiResourceUrls = [
     "deviceManagement/deviceConfigurations?$expand=assignments",
 ]
 
-const GroupOverviewContent = () => {
+const getLayoutedElements = (elements, direction = 'TB') => {
+    const isHorizontal = direction === 'LR';
+    dagreGraph.setGraph({ rankdir: direction });
+
+    elements.forEach((el) => {
+        if (isNode(el)) {
+            dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
+        } else {
+            dagreGraph.setEdge(el.source, el.target);
+        }
+    });
+
+    dagre.layout(dagreGraph);
+
+    return elements.map((el) => {
+        if (isNode(el)) {
+            const nodeWithPosition = dagreGraph.node(el.id);
+            el.targetPosition = isHorizontal ? 'left' : 'top';
+            el.sourcePosition = isHorizontal ? 'right' : 'bottom';
+
+            // unfortunately we need this little hack to pass a slighltiy different position
+            // to notify react flow about the change. More over we are shifting the dagre node position
+            // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
+            el.position = {
+                x: nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
+                y: nodeWithPosition.y - nodeHeight / 2,
+            };
+        }
+
+        return el;
+    });
+};
+
+export function GroupOverview() {
+    const authRequest = {
+        ...loginRequest
+    };
+
     const { inProgress } = useMsal();
-    const [groups, setGroups] = useState(null);
-    const [graphResources, setResources] = useState(null);
+    //const [groups, setGroups] = useState(null);
+    const [reactFlowElements, setReactFlowElements] = useState(null);
+
+    function buildEdge(sourceId, targetId) {
+        return { id: sourceId + "-" + targetId, source: sourceId, target: targetId }
+    }
+
+
+    function buildGroupNode(item) {
+        return {
+            id: item.id,
+            type: 'input',
+            data: { label: item.displayName },
+            position: { x: 0, y: 0 },
+        }
+    };
+
+    function buildResourceNode(item) {
+        return {
+            id: item.id,
+            type: 'output',
+            data: { label: item.displayName },
+            position: { x: 0, y: 0 },
+        }
+    }
 
     async function fetchGraphData() {
-        let promises = [];
+        let resourcePromises = [];
         graphApiResourceUrls.forEach((item, index) => {
             let graphPromise = callMsGraph(item);
-            promises.push(graphPromise);
+            resourcePromises.push(graphPromise);
         })
 
-        // wait till all data has been fetched
-        let graphData = await Promise.all(promises);
+        // wait till all resource data has been fetched
+        let resourcesData = await Promise.all(resourcePromises);
 
         // only interested in the value property
-        graphData = graphData.map(data => data.value);
+        resourcesData = resourcesData.map(data => data.value);
 
         let groupIds = [];
+        let resourceNodes = [];
+        let edges = [];
 
         // check every resource for assignments
-        for (let g = 0; g < graphData.length; g++) {
-            for (let i = 0; i < graphData[g].length; i++) {
-                let item = graphData[g][i];
+        for (let g = 0; g < resourcesData.length; g++) {
+            for (let i = 0; i < resourcesData[g].length; i++) {
+                let item = resourcesData[g][i];
                 // console.log(item);
 
                 if (item.assignments) {
@@ -53,18 +125,61 @@ const GroupOverviewContent = () => {
                         if (assignment.target && assignment.target.groupId) {
                             let groupId = assignment.target.groupId;
                             // console.log(groupId);
+
                             if (groupIds.indexOf(groupId) === -1) {
                                 groupIds.push(groupId);
                             }
+
+                            // build edges for assignment
+                            let edge = buildEdge(groupId, item.id);
+                            edges.push(edge);
                         }
                     }
+                    let resourceNode = buildResourceNode(item);
+                    resourceNodes.push(resourceNode);
                 }
             }
         }
 
+        let groupPromises = [];
         console.log(groupIds);
 
-        console.log(graphData);
+        // fetch Group information
+        for (let groupIndex = 0; groupIndex < groupIds.length; groupIndex++) {
+            let graphApiGroupUrl = "groups/" + groupIds[groupIndex];
+            //console.log(graphApiGroupUrl);
+
+            let graphPromise = callMsGraph(graphApiGroupUrl);
+            groupPromises.push(graphPromise);
+        }
+
+        // wait for all data to arrive
+        let groupData = await Promise.all(groupPromises);
+
+        // build nodes
+        let groupNodes = [];
+        groupData.forEach(element => {
+            let groupNode = buildGroupNode(element);
+            groupNodes.push(groupNode);
+        })
+
+        // setResources(resourcesWithAssignments);
+        // setGroups(groupData);
+
+        console.log(groupData);
+        console.log(resourcesData);
+
+        let reactFlowElementsTmp = groupNodes.concat(resourceNodes);
+        reactFlowElementsTmp = reactFlowElementsTmp.concat(edges);
+
+        const layoutedElements = getLayoutedElements(reactFlowElementsTmp, 'LR');
+
+        setReactFlowElements(layoutedElements);
+
+        console.log(groupNodes);
+        console.log(resourceNodes);
+        console.log(edges);
+
     }
 
     useEffect(() => {
@@ -73,17 +188,6 @@ const GroupOverviewContent = () => {
         }
     }, [inProgress]);
 
-    return (
-        <Paper>
-            <p>hello</p>
-        </Paper>
-    );
-};
-
-export function GroupOverview() {
-    const authRequest = {
-        ...loginRequest
-    };
 
     return (
         <MsalAuthenticationTemplate
@@ -92,7 +196,15 @@ export function GroupOverview() {
             errorComponent={ErrorComponent}
             loadingComponent={Loading}
         >
-            <GroupOverviewContent />
+
+        {
+            reactFlowElements && reactFlowElements.length > 0 &&
+            <div style={{ height: 1000, width: 1000 }}>
+                <ReactFlow elements={reactFlowElements}></ReactFlow>
+            </div>
+        }
+        
         </MsalAuthenticationTemplate>
     )
 };
+
