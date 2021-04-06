@@ -14,7 +14,7 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 // Config object to be passed to Msal on creation
 export const msalConfig = {
     auth: {
-        clientId: "0a61c279-646b-4055-a5f1-1c3da7f70f18",
+        clientId: "67143d8e-374a-488d-b977-e4af2a3d534d",
         redirectUri: "/",
         postLogoutRedirectUri: "/"
     },

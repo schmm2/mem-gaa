@@ -1,7 +1,9 @@
 import { loginRequest, graphConfig } from "../authConfig";
 import { msalInstance } from "../index";
 
-export async function callMsGraph() {
+const graphApiBaseUrl = "https://graph.microsoft.com/beta/"
+
+export async function callMsGraph(graphApiResourceUrl) {
     const account = msalInstance.getActiveAccount();
     if (!account) {
         throw Error("No active account! Verify a user has been signed in and setActiveAccount has been called.");
@@ -22,7 +24,8 @@ export async function callMsGraph() {
         headers: headers
     };
 
-    return fetch(graphConfig.graphMeEndpoint, options)
+    let graphApiFullUrl = graphApiBaseUrl + graphApiResourceUrl
+    return fetch(graphApiFullUrl, options)
         .then(response => response.json())
         .catch(error => console.log(error));
 }
