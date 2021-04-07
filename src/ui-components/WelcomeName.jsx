@@ -12,9 +12,8 @@ export const WelcomeName = () => {
         }
     }, [accounts]);
 
-    if (name) {
-        
-        return <Text fontSize="lg">Welcome, {name}</Text>;
+    if (name) {       
+        return <Text fontSize="md" color="white">Welcome, {name}</Text>;
     } else {
         return null;
     }

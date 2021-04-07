@@ -1,24 +1,19 @@
 import { WelcomeName } from "./WelcomeName";
 import { SignInSignOutButton } from "./SignInSignOutButton";
 import { NavBarContainer } from "./NavBarContainer";
-import { Flex } from "@chakra-ui/react"
+import { HStack } from "@chakra-ui/react"
 import Logo from "./Logo";
-
+import './NavBar.css';
 
 const NavBar = () => {
     return (
-        <div>
-            <NavBarContainer>
-                <Logo />
-                <Flex
-                    align="center"
-                    justify="space-between"
-                >
-                    <WelcomeName />
-                    <SignInSignOutButton />
-                </Flex>
-            </NavBarContainer>
-        </div>
+        <NavBarContainer className="navbar">
+            <Logo />
+            <HStack className="menu" spacing="24px">
+                <WelcomeName />
+                <SignInSignOutButton />
+            </HStack>
+        </NavBarContainer>
     );
 };
 
