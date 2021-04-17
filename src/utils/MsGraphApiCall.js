@@ -1,4 +1,4 @@
-import { loginRequest, graphConfig } from "../authConfig";
+import { loginRequest } from "../authConfig";
 import { msalInstance } from "../index";
 
 const graphApiBaseUrl = "https://graph.microsoft.com/beta/"

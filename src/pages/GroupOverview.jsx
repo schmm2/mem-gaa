@@ -1,8 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import ReactFlow, {
-    ReactFlowProvider,
-    addEdge,
-    removeElements,
     isNode,
     Controls,
     Handle
@@ -10,6 +7,7 @@ import ReactFlow, {
 import dagre from 'dagre';
 import { GrGroup } from "react-icons/gr"
 import { Icon } from "@chakra-ui/react"
+import { Spinner } from "@chakra-ui/react"
 
 import './GroupOverview.css'
 
@@ -32,15 +30,47 @@ const nodeWidth = 172;
 const nodeHeight = 36;
 
 // Resources like configurations, apps...
-const graphApiResourceUrls = [
-    "deviceManagement/deviceEnrollmentConfigurations?$expand=assignments",
-    "deviceManagement/deviceConfigurations?$expand=assignments",
-    "deviceManagement/deviceCompliancePolicies?$expand=assignments",
-    "deviceManagement/windowsAutopilotDeploymentProfiles?$expand=assignments",
-    "deviceAppManagement/androidManagedAppProtections?$expand=assignments",
-    "deviceAppManagement/iosManagedAppProtections?$expand=assignments",
-    "deviceAppManagement/mobileAppConfigurations?$expand=assignments",
-    "deviceManagement/groupPolicyConfigurations?$expand=assignments"
+const graphApiResources = [
+    {
+        nodeId: 1,
+        url: "deviceManagement/deviceEnrollmentConfigurations?$expand=assignments",
+        displayName: "Device Enrollment Configuration"
+    },
+    {
+        nodeId: 2,
+        url: "deviceManagement/deviceConfigurations?$expand=assignments",
+        displayName: "Device Configurations"
+    },
+    {
+        nodeId: 3,
+        url: "deviceManagement/deviceCompliancePolicies?$expand=assignments",
+        displayName: "Device Compliance Policies"
+    },
+    {
+        nodeId: 4,
+        url: "deviceManagement/windowsAutopilotDeploymentProfiles?$expand=assignments",
+        displayName: "Windows Autopilot Deployment Profiles"
+    },
+    {
+        nodeId: 5,
+        url: "deviceAppManagement/androidManagedAppProtections?$expand=assignments",
+        displayName: "androidManagedAppProtections"
+    },
+    {
+        nodeId: 6,
+        url: "deviceAppManagement/iosManagedAppProtections?$expand=assignments",
+        displayName: "iosManagedAppProtections"
+    },
+    {
+        nodeId: 7,
+        url: "deviceAppManagement/mobileAppConfigurations?$expand=assignments",
+        displayName: "mobileAppConfigurations"
+    },
+    {
+        nodeId: 8,
+        url: "deviceManagement/groupPolicyConfigurations?$expand=assignments",
+        displayName: "groupPolicyConfigurations"
+    }
 ]
 
 const getLayoutedElements = (elements, direction = 'TB') => {
@@ -84,6 +114,7 @@ export function GroupOverview() {
     const { inProgress } = useMsal();
     //const [groups, setGroups] = useState(null);
     const [reactFlowElements, setReactFlowElements] = useState(null);
+    const [isDataPrepared, setDataPrepared] = useState(false);
 
     function buildEdge(sourceId, targetId) {
         return { id: sourceId + "-" + targetId, source: sourceId, target: targetId }
@@ -102,6 +133,15 @@ export function GroupOverview() {
     function buildResourceNode(item) {
         return {
             id: item.id,
+            type: 'default',
+            data: { label: item.displayName },
+            position: { x: 0, y: 0 },
+        }
+    }
+
+    function buildGraphResourceNode(item) {
+        return {
+            id: item.nodeId,
             type: 'output',
             data: { label: item.displayName },
             position: { x: 0, y: 0 },
@@ -136,120 +176,139 @@ export function GroupOverview() {
         'borderWidth': '1px',
         'borderStyle': 'solid',
         'backgroundColor': '#ffffff'
-};
+    };
 
-async function fetchGraphData() {
-    let resourcePromises = [];
-    graphApiResourceUrls.forEach((item, index) => {
-        let graphPromise = callMsGraph(item);
-        resourcePromises.push(graphPromise);
-    })
+    async function fetchGraphData() {
+        let groupIds = [];
+        let resourceNodes = [];
+        let resourceGroupNodes = [];
+        let edges = [];
 
-    // wait till all resource data has been fetched
-    let resourcesData = await Promise.all(resourcePromises);
+        await Promise.all(graphApiResources.map(async (graphApiResourceObject) => {
+            //console.log(graphApiResourceObject);
 
-    // only interested in the value property
-    resourcesData = resourcesData.map(data => data.value);
+            // get graph resource
+            let graphResource = await callMsGraph(graphApiResourceObject.url);
 
-    let groupIds = [];
-    let resourceNodes = [];
-    let edges = [];
+            // only interested in the value property
+            graphResource = graphResource.value;
+            //console.log(graphResource);
 
-    // check every resource for assignments
-    for (let g = 0; g < resourcesData.length; g++) {
-        for (let i = 0; i < resourcesData[g].length; i++) {
-            let item = resourcesData[g][i];
-            console.log(item);
+            // check every resource item for assignments
+            for (let g = 0; g < graphResource.length; g++) {
+                let item = graphResource[g];
+                //console.log(item);
 
-            if (item.assignments) {
-                for (let a = 0; a < item.assignments.length; a++) {
-                    let assignment = item.assignments[a];
-                    // console.log(assignment);
+                if (item.assignments) {
+                    for (let a = 0; a < item.assignments.length; a++) {
+                        let assignment = item.assignments[a];
+                        // console.log(assignment);
 
-                    if (assignment.target && assignment.target.groupId) {
-                        let groupId = assignment.target.groupId;
-                        // console.log(groupId);
+                        if (assignment.target && assignment.target.groupId) {
+                            let groupId = assignment.target.groupId;
+                            // console.log(groupId);
 
-                        if (groupIds.indexOf(groupId) === -1) {
-                            groupIds.push(groupId);
+                            if (groupIds.indexOf(groupId) === -1) {
+                                groupIds.push(groupId);
+                            }
+
+                            // build edges for assignment
+                            let edge = buildEdge(groupId, item.id);
+                            edges.push(edge);
                         }
-
-                        // build edges for assignment
-                        let edge = buildEdge(groupId, item.id);
-                        edges.push(edge);
                     }
+                    let resourceNode = buildResourceNode(item);
+                    resourceNodes.push(resourceNode);
+
+                    // create graph resource node element
+                    let newGraphResourceObject = {};
+                    newGraphResourceObject = Object.assign(graphApiResourceObject);
+                    newGraphResourceObject.nodeId = graphApiResourceObject.id + "-" + item.id;
+
+                    let resourceGroupNode = buildGraphResourceNode(newGraphResourceObject);
+                    resourceGroupNodes.push(resourceGroupNode);
+
+                    // build edge to resourceGroupNode
+                    let resourceGroupEdge = buildEdge(item.id, newGraphResourceObject.nodeId);
+                    edges.push(resourceGroupEdge);
                 }
-                let resourceNode = buildResourceNode(item);
-                resourceNodes.push(resourceNode);
             }
-        }
-    }
+        }));
 
-    let groupPromises = [];
-    console.log(groupIds);
+        // fetch Group information
+        let groupPromises = [];
+        console.log(groupIds);
 
-    // fetch Group information
-    for (let groupIndex = 0; groupIndex < groupIds.length; groupIndex++) {
-        let graphApiGroupUrl = "groups/" + groupIds[groupIndex];
-        //console.log(graphApiGroupUrl);
+        for (let groupIndex = 0; groupIndex < groupIds.length; groupIndex++) {
+            let graphApiGroupUrl = "groups/" + groupIds[groupIndex];
+            //console.log(graphApiGroupUrl);
 
-        let graphPromise = callMsGraph(graphApiGroupUrl);
-        groupPromises.push(graphPromise);
-    }
-
-    // wait for all data to arrive
-    let groupData = await Promise.all(groupPromises);
-
-    // build nodes
-    let groupNodes = [];
-    groupData.forEach(element => {
-        let groupNode = buildGroupNode(element);
-        groupNodes.push(groupNode);
-    })
-
-    // setResources(resourcesWithAssignments);
-    // setGroups(groupData);
-
-    /* console.log(groupData);
-    console.log(resourcesData); */
-
-    let reactFlowElementsTmp = groupNodes.concat(resourceNodes);
-    reactFlowElementsTmp = reactFlowElementsTmp.concat(edges);
-
-    const layoutedElements = getLayoutedElements(reactFlowElementsTmp, 'LR');
-
-    setReactFlowElements(layoutedElements);
-
-    console.log(groupNodes);
-    console.log(resourceNodes);
-    console.log(edges);
-}
-
-useEffect(() => {
-    if (inProgress === InteractionStatus.None) {
-        fetchGraphData();
-    }
-}, [inProgress]);
-
-
-return (
-    <MsalAuthenticationTemplate
-        interactionType={InteractionType.Redirect}
-        authenticationRequest={authRequest}
-        errorComponent={ErrorComponent}
-        loadingComponent={Loading}
-    >
-
-        {
-            reactFlowElements && reactFlowElements.length > 0 &&
-            <div className="reactFlowContainer">
-                <ReactFlow elements={reactFlowElements} nodeTypes={nodeTypes} >
-                    <Controls />
-                </ReactFlow>
-            </div>
+            let graphPromise = await callMsGraph(graphApiGroupUrl);
+            groupPromises.push(graphPromise);
         }
 
-    </MsalAuthenticationTemplate>
-)
+
+        // wait for all data to arrive
+        let groupData = await Promise.all(groupPromises);
+
+        // build nodes
+        let groupNodes = [];
+        groupData.forEach(element => {
+            let groupNode = buildGroupNode(element);
+            groupNodes.push(groupNode);
+        })
+
+        // setResources(resourcesWithAssignments);
+        // setGroups(groupData);
+
+        /* console.log(groupData);
+        console.log(resourcesData); */
+
+        let reactFlowElementsTmp = groupNodes.concat(resourceNodes);
+        reactFlowElementsTmp = reactFlowElementsTmp.concat(edges);
+        reactFlowElementsTmp = reactFlowElementsTmp.concat(resourceGroupNodes);
+
+        const layoutedElements = getLayoutedElements(reactFlowElementsTmp, 'LR');
+
+        setReactFlowElements(layoutedElements);
+
+        console.log(groupNodes);
+        console.log(resourceNodes);
+        console.log(edges);
+
+        setDataPrepared(true);
+    }
+
+    useEffect(() => {
+        if (inProgress === InteractionStatus.None) {    
+            fetchGraphData();
+        }
+        // eslint-disable-next-line
+    }, [inProgress]);
+
+
+    return (
+        <MsalAuthenticationTemplate
+            interactionType={InteractionType.Redirect}
+            authenticationRequest={authRequest} 
+            errorComponent={ErrorComponent}
+            loadingComponent={Loading}
+        >
+
+            {
+                isDataPrepared &&
+                <div className="reactFlowContainer">
+                    <ReactFlow elements={reactFlowElements} nodeTypes={nodeTypes} >
+                        <Controls />
+                    </ReactFlow>
+                </div>
+            }
+            {
+                !isDataPrepared &&
+                <Spinner></Spinner>
+            }
+
+        </MsalAuthenticationTemplate>
+    )
 };
 

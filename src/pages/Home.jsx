@@ -1,6 +1,6 @@
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { UnauthenticatedTemplate } from "@azure/msal-react";
 import { Text } from "@chakra-ui/react"
-import { Container, Center, Box } from "@chakra-ui/react"
+import { Center, Box } from "@chakra-ui/react"
 import { SignInButton } from "../ui-components/SignInButton";
 
 export function Home() {
