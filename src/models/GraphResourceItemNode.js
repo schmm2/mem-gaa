@@ -8,6 +8,11 @@ class GraphResourceItemNode {
       connectedGraphResourceTypId: connectedGraphResourceTypId
     };
     this.position = { x: 0, y: 0 };
+    this.style = {
+      background: 'white',
+      color: '#333',
+      border: '1px solid #222138',
+    }
   }
 }
 

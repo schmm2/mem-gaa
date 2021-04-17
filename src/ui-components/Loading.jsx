@@ -3,11 +3,11 @@ import { Text, Stack, Center, Box, Spinner } from "@chakra-ui/react"
 export const Loading = (props) => {
     return (
         <Box>
-            <Stack spacing="20px" textAlign="center">
+            <Stack spacing="20px" textAlign="center" color="white">
                 <Center>
                     <Spinner color="white" size="xl"></Spinner>
                 </Center>
-                <Text fontSize="lg" fontWeight="bold" color="teal">{props.text}</Text>
+                <Text fontSize="lg" fontWeight="bold">{props.text}</Text>
             </Stack>
         </Box>
     )
