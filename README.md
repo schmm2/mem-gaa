@@ -1,6 +1,6 @@
 # Microsoft Endpoint Manager - Group Assignment Analyzer
 
-The Microsoft Endpoint Manager - Group Assignment Analyzer (short memgaa) is a web app which will give you an overview of all security groups that are currently used by the Endpoint Manager / Intune.
+The Microsoft Endpoint Manager - Group Assignment Analyzer (memgaa) is a web app which will give you an overview of all security groups that are currently used by the Endpoint Manager / Intune.
 
 This comes in handy if you have to analyze the setup of intune for a new client.
 The lack of documentation or a bad naming concept often lead to the questions "is this groups still used ... and if yes, where is it assigned?".
