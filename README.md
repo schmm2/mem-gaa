@@ -19,9 +19,9 @@ To Authenticate with the Microsoft Graph API a multi tenant Azure AD application
 The webapp is built with react and chakra ui.
 
 ### Libraries
-https://reactjs.org/
-https://chakra-ui.com/
-https://reactflow.dev/
+- https://reactjs.org/
+- https://chakra-ui.com/
+- https://reactflow.dev/
 
 ### Boilerplate Source
 I didn't want to start from scratch so I copied this sample by [Microsoft](https://github.com/AzureAD/microsoft-authentication-library-for-js/tree/dev/samples/msal-react-samples/react-router-sample)
