@@ -8,8 +8,6 @@ The lack of documentation or a bad naming concept often lead to the questions "i
 ## App
 memgaa is hosted on Azure as a static web app and can be access via this [url](https://yellow-moss-05fef5803.azurestaticapps.net)
 
-Feel free to try out the app.
-
 ### Support
 I'm happy for every feedback and pull request.
 You can reach me via email in my bio. I will try to answer all questions as soon as possible.
