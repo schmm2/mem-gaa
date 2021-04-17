@@ -6,8 +6,8 @@ import { Link } from "@chakra-ui/react"
 export default function Logo(props) {
   return (
     <Box {...props}>
-      <Text fontSize="lg" fontWeight="bold" color="teal">
-        <Link className="pointerOn" component={RouterLink} to="/groupoverview">MEM - Group Assignment Analyzer</Link>
+      <Text fontSize="lg" fontWeight="bold" color="white">
+        MEM - Group Assignment Analyzer
       </Text>
     </Box>
   )

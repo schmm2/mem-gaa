@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import ReactFlow, {
     isNode,
     Controls,
-    Handle
+    Handle,
+    MiniMap, 
 } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { GrGroup } from "react-icons/gr"
@@ -294,15 +295,19 @@ export function GroupOverview() {
             {
                 isDataPrepared &&
                 <div className="reactFlowContainer">
-                    <ReactFlow elements={reactFlowElements} nodeTypes={nodeTypes} >
+                    <ReactFlow
+                        nodesDraggable={false}
+                        elements={reactFlowElements}
+                        nodeTypes={nodeTypes} >
                         <Controls />
+                        <MiniMap />
                     </ReactFlow>
                 </div>
             }
             {
                 !isDataPrepared &&
-                <Center height="100vh">
-                   <Loading text="Collecting Data"></Loading>
+                <Center minHeight="100vh">
+                    <Loading text="Collecting Data"></Loading>
                 </Center>
             }
         </MsalAuthenticationTemplate>
