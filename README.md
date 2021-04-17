@@ -10,8 +10,10 @@ memgaa is hosted on Azure as a static web app:
 https://yellow-moss-05fef5803.azurestaticapps.net
 
 Feel free to try out the app.
-I welcome every feedback and pull requests for enhancements.
+I'm happy for every feedback and pull requests.
 
+## Consent and Permissions
+To Authenticate with the Microsoft Graph API a multi tenant Azure AD application performs authentication and you will need to provide consent to the Azure AD application before you can use this tool.
 
 ## Tech
 The webapp is built with react and chakra ui for the ui components.
