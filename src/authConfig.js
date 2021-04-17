@@ -15,7 +15,7 @@ const isFirefox = firefox > 0; // Only needed if you need to support the redirec
 export const msalConfig = {
     auth: {
         clientId: "67143d8e-374a-488d-b977-e4af2a3d534d",
-        redirectUri: "/groupoverview",
+        redirectUri: "/",
         navigateToLoginRequestUrl:false,
         postLogoutRedirectUri: "/"
     },

@@ -11,7 +11,7 @@ export function Home() {
           <Box backgroundColor="white" p={8} maxWidth="500px" minWidth="300px" borderWidth={1} borderRadius={8}>
             <Stack spacing="20px">
               <Text fontSize="lg" p={2}>
-                Login
+                Hello
               </Text>
               <Text fontSize="md" p={2}>
                 Please sign in
