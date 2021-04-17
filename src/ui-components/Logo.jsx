@@ -7,7 +7,7 @@ export default function Logo(props) {
   return (
     <Box {...props}>
       <Text fontSize="lg" fontWeight="bold" color="teal">
-        <Link component={RouterLink} to="/">MEM-GAA</Link>
+        <Link className="pointerOn" component={RouterLink} to="/groupoverview">MEM - Group Assignment Analyzer</Link>
       </Text>
     </Box>
   )

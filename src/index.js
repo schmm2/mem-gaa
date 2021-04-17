@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 import theme from "./styles/theme";
 
-console.log(theme);
 
 export const msalInstance = new PublicClientApplication(msalConfig);
 

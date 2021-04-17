@@ -1,5 +1,5 @@
 import { WelcomeName } from "./WelcomeName";
-import { SignInSignOutButton } from "./SignInSignOutButton";
+import { MenuComponent } from './MenuComponent';
 import { NavBarContainer } from "./NavBarContainer";
 import { HStack } from "@chakra-ui/react"
 import Logo from "./Logo";
@@ -9,9 +9,9 @@ const NavBar = () => {
     return (
         <NavBarContainer className="navbar">
             <Logo />
-            <HStack className="menu" spacing="24px">
+            <HStack className="pointerOn" spacing="24px">
                 <WelcomeName />
-                <SignInSignOutButton />
+                <MenuComponent />
             </HStack>
         </NavBarContainer>
     );
