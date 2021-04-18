@@ -99,6 +99,12 @@ const graphApiResources = [
         url: "/deviceManagement/deviceManagementScripts?$expand=assignments",
         displayName: "Device Management Script",
         icon: "powershell"
+    },
+    {
+        id: 10,
+        url: "deviceManagement/deviceHealthScripts?$expand=assignments",
+        displayName: "Device Health Script - Proactive Remediation",
+        icon: "powershell"
     }
 ]
 
@@ -241,7 +247,7 @@ export function GroupOverview() {
                     // Assignments foreach  
                     for (let a = 0; a < resourceItem.assignments.length; a++) {
                         let assignment = resourceItem.assignments[a];
-                        console.log(assignment);
+                        // console.log(assignment);
 
                         if (assignment.target && assignment.target.groupId) {
                             let groupId = assignment.target.groupId;
@@ -291,7 +297,7 @@ export function GroupOverview() {
 
         // fetch Group information
         let groupPromises = [];
-        console.log(groupIds);
+        // console.log(groupIds);
 
         for (let groupIndex = 0; groupIndex < groupIds.length; groupIndex++) {
             let graphApiGroupUrl = "groups/" + groupIds[groupIndex];
