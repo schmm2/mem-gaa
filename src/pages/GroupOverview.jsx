@@ -3,7 +3,7 @@ import ReactFlow, {
     isNode,
     Controls,
     Handle,
-    MiniMap, 
+    MiniMap,
 } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { GrGroup } from "react-icons/gr"
@@ -36,7 +36,7 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 // Graph Node size
 const nodeWidth = 220;
-const nodeHeight = 40;
+const nodeHeight = 60;
 
 // Resources like configurations, apps...
 const graphApiResources = [
@@ -103,7 +103,7 @@ const graphApiResources = [
     {
         id: 10,
         url: "deviceManagement/deviceHealthScripts?$expand=assignments",
-        displayName: "Device Health Script - Proactive Remediation",
+        displayName: "Proactive Remediation - Device Health Script",
         icon: "powershell"
     }
 ]
@@ -182,7 +182,7 @@ export function GroupOverview() {
         );
     };
 
-    
+
     const GraphResourceTypeNodeComponent = ({ data }) => {
         return (
             <div style={customNodeStyles}>
@@ -277,12 +277,26 @@ export function GroupOverview() {
                                 // console.log(graphResourceTypeNodeId + "already exists");
                             }
 
+                            // Assignment intent
+                            let assignmentIntent = null;
+                            if (assignment.target["@odata.type"]) {
+                                if (assignment.target["@odata.type"].includes("exclusion")) {
+                                    assignmentIntent = "excluded";
+                                } else {
+                                    assignmentIntent = "included"
+                                }
+                            }
+
+                            if (assignment.intent) {
+                                assignmentIntent = assignment.intent;
+                            }
+
                             // build Graph Resource Item Node
                             let newGraphResourceItem = new GraphResourceItemNode(
                                 resourceItem.displayName,
                                 resourceItem.id,
                                 graphResourceTypeNodeId,
-                                assignment.intent
+                                assignmentIntent
                             );
                             graphResourceItemNodes.push(newGraphResourceItem);
 
@@ -323,7 +337,7 @@ export function GroupOverview() {
         console.log(graphResourceTypeNodes);
         console.log(edges);
         console.log(groupNodes);*/
-        
+
 
         let reactFlowElementsTmp = groupNodes.concat(graphResourceTypeNodes);
         reactFlowElementsTmp = reactFlowElementsTmp.concat(graphResourceItemNodes);
