@@ -30,7 +30,7 @@ Currently not all policies and object types are supported. I'm working on adding
 I'm happy for every feedback and pull request.
 You can reach me via email in my bio. I will try to answer all questions as soon as possible.
 
-## Consent and Permissions
+### Consent and Permissions
 To Authenticate with the Microsoft Graph API a multi tenant Azure AD application performs authentication and you will need to provide consent to the Azure AD application before you can use this tool.
 
 ## Tech
