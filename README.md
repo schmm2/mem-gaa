@@ -6,7 +6,25 @@ This comes in handy if you have to analyze a tenant of a new client.
 The lack of documentation or a bad naming concept often lead to the questions "is this groups still used ... and if yes, where is it assigned?".
 
 ## App
-memgaa is hosted on Azure as a static web app and can be access via this [url](https://yellow-moss-05fef5803.azurestaticapps.net)
+The app is hosted on Azure as a static web app and can be access via this [url](https://yellow-moss-05fef5803.azurestaticapps.net)
+
+The integrated graph resources are:
+- Device Enrollment Configuration
+- Device Configurations
+- Device Compliance Policies
+- Windows Autopilot Deployment Profiles
+- Android Managed App Protections
+- iOs Managed App Protections
+- Mobile App Configurations
+- GroupPolicy Configurations
+- Mobile Apps
+
+### Roadmap
+Currently not all policies and object types are supported. I'm working on adding these types in the near future:
+- Endpoint Security Settings
+- Proactive Remediations
+- Powershell Scripts
+- Conditional Access Policies
 
 ### Support
 I'm happy for every feedback and pull request.
