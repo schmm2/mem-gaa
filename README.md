@@ -20,12 +20,12 @@ The integrated graph resources are:
 - Mobile App Configurations
 - GroupPolicy Configurations
 - Mobile Apps
+- Powershell Scripts
+- Proactive Remediations
 
 ### Roadmap
 Currently not all policies and object types are supported. I'm working on adding these types in the near future:
 - Endpoint Security Settings
-- Proactive Remediations
-- Powershell Scripts
 - Conditional Access Policies
 
 ### Support
