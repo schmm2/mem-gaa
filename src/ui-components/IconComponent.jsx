@@ -3,9 +3,12 @@ import { DiWindows } from "react-icons/di";
 import { GrApps, GrDocumentConfig,GrCompliance } from "react-icons/gr";
 import { ImAirplane } from "react-icons/im";
 import { AiOutlineFileProtect } from "react-icons/ai";
+import { SiPowershell } from "react-icons/si";
 
 function renderIcon(iconName) {
     switch (iconName) {
+        case 'powershell':
+            return <Icon as={SiPowershell} />;
         case 'protection':
             return <Icon as={AiOutlineFileProtect} />;
         case 'plane':
@@ -22,7 +25,6 @@ function renderIcon(iconName) {
             return <span />;
     }
 }
-
 
 export const IconComponent = (props) => {
     return (
