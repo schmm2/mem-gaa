@@ -312,11 +312,11 @@ export function GroupOverview() {
         })
 
         // enable for debug
-        
+        /*
         console.log(graphResourceItemNodes);
         console.log(graphResourceTypeNodes);
         console.log(edges);
-        console.log(groupNodes);
+        console.log(groupNodes);*/
         
 
         let reactFlowElementsTmp = groupNodes.concat(graphResourceTypeNodes);
