@@ -5,6 +5,8 @@ The Microsoft Endpoint Manager - Group Assignment Analyzer (memgaa) is a web app
 This comes in handy if you have to analyze a tenant of a new client.
 The lack of documentation or a bad naming concept often lead to the questions "is this groups still used ... and if yes, where is it assigned?".
 
+![Overview](docs/img/memgaa.png)
+
 ## App
 The app is hosted on Azure as a static web app and can be access via this [url](https://yellow-moss-05fef5803.azurestaticapps.net)
 
