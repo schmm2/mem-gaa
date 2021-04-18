@@ -372,7 +372,17 @@ export function GroupOverview() {
                         elements={reactFlowElements}
                         nodeTypes={nodeTypes} >
                         <Controls />
-                        <MiniMap />
+                        <MiniMap
+                            nodeColor={(node) => {
+                                switch (node.type) {
+                                    case 'group':
+                                        return 'red';
+                                    default:
+                                        return '#000';
+                                }
+                            }}
+                            nodeStrokeWidth={3}
+                        />
                     </ReactFlow>
                 </div>
             }
