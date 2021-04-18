@@ -93,6 +93,12 @@ const graphApiResources = [
         url: "deviceAppManagement/mobileApps?$expand=assignments",
         displayName: "Mobile Apps",
         icon: "apps"
+    },
+    {
+        id: 9,
+        url: "/deviceManagement/deviceManagementScripts?$expand=assignments",
+        displayName: "Device Management Script",
+        icon: "powershell"
     }
 ]
 
