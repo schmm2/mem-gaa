@@ -73,7 +73,7 @@ const graphApiResources = [
     {
         id: 6,
         url: "deviceAppManagement/iosManagedAppProtections?$expand=assignments",
-        displayName: "iOs Managed App Protections",
+        displayName: "iOS Managed App Protections",
         icon: "protection"
     },
     {

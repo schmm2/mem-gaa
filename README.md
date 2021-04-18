@@ -16,7 +16,7 @@ The integrated graph resources are:
 - Device Compliance Policies
 - Windows Autopilot Deployment Profiles
 - Android Managed App Protections
-- iOs Managed App Protections
+- iOS Managed App Protections
 - Mobile App Configurations
 - GroupPolicy Configurations
 - Mobile Apps
