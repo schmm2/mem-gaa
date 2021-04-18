@@ -1,7 +1,7 @@
 class GraphResourceTypeNode {
     constructor(displayName, typeId, connectedGroupId, icon) {
         this.id = typeId + "-" + connectedGroupId;
-        this.type = 'default';      
+        this.type = 'resourceType';      
         this.data = {
             label: displayName,
             typeId: typeId,

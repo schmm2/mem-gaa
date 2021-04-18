@@ -1,10 +1,11 @@
 class GraphResourceItemNode {
-  constructor(displayName, graphId, connectedGraphResourceTypId) {
-    this.id = graphId + "_" + connectedGraphResourceTypId;
-    this.type = "output";
+  constructor(displayName, graphId, connectedGraphResourceTypId, intent) {
+    this.id = connectedGraphResourceTypId + "_" + graphId + "_" + intent;
+    this.type = "resourceItem";
     this.data = {
       label: displayName,
       graphId: graphId,
+      intent: intent,
       connectedGraphResourceTypId: connectedGraphResourceTypId
     };
     this.position = { x: 0, y: 0 };
