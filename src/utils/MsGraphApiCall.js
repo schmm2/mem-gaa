@@ -3,6 +3,11 @@ import { msalInstance } from "../index";
 
 const graphApiBaseUrl = "https://graph.microsoft.com/beta/"
 
+function handleErrors(response) {
+    if (!response.ok) throw Error(response.statusText);
+    return response;
+}
+
 export async function callMsGraph(graphApiResourceUrl) {
     const account = msalInstance.getActiveAccount();
     if (!account) {
@@ -26,6 +31,7 @@ export async function callMsGraph(graphApiResourceUrl) {
 
     let graphApiFullUrl = graphApiBaseUrl + graphApiResourceUrl
     return fetch(graphApiFullUrl, options)
+        .then(handleErrors)
         .then(response => response.json())
-        .catch(error => console.log(error));
+        .catch(error => console.log("error: unable to request " + graphApiFullUrl));
 }
