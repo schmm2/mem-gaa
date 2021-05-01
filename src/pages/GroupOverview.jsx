@@ -233,103 +233,107 @@ export function GroupOverview() {
             // get graph resource
             let graphResource = await callMsGraph(graphApiResourceObject.url);
 
-            // only interested in the value property
-            graphResource = graphResource.value;
-            //console.log(graphResource);
+            if (graphResource && graphResource.value) {
+                // only interested in the value property
+                graphResource = graphResource.value;
+                //console.log(graphResource);
 
-            // Graph Resources foreach  
-            for (let g = 0; g < graphResource.length; g++) {
-                let resourceItem = graphResource[g];
-                //console.log(resourceresourceItem);
+                // Graph Resources foreach  
+                for (let g = 0; g < graphResource.length; g++) {
+                    let resourceItem = graphResource[g];
+                    //console.log(resourceresourceItem);
 
-                // check every resource resourceItem for assignments
-                if (resourceItem.assignments) {
-                    // Assignments foreach  
-                    for (let a = 0; a < resourceItem.assignments.length; a++) {
-                        let assignment = resourceItem.assignments[a];
-                        // console.log(assignment);
+                    // check every resource resourceItem for assignments
+                    if (resourceItem.assignments) {
+                        // Assignments foreach  
+                        for (let a = 0; a < resourceItem.assignments.length; a++) {
+                            let assignment = resourceItem.assignments[a];
+                            // console.log(assignment);
 
-                        if (assignment.target && assignment.target.groupId) {
-                            let groupId = assignment.target.groupId;
-                            // console.log(groupId);
+                            if (assignment.target && assignment.target.groupId) {
+                                let groupId = assignment.target.groupId;
+                                // console.log(groupId);
 
-                            // found a new group
-                            if (groupIds.indexOf(groupId) === -1) {
-                                groupIds.push(groupId);
-                            }
-
-                            // build Graph Resource Type Node
-                            let graphResourceTypeNodeId = graphApiResourceObject.id + "-" + groupId;
-                            if (!checkObjectWithIdExistsInArray(graphResourceTypeNodeId, graphResourceTypeNodes)) {
-                                // node not yet created
-                                let newGraphResourceTypeNode = new GraphResourceTypeNode(
-                                    graphApiResourceObject.displayName,
-                                    graphApiResourceObject.id,
-                                    groupId,
-                                    graphApiResourceObject.icon
-                                );
-                                graphResourceTypeNodes.push(newGraphResourceTypeNode);
-
-                                // create edge from Type to Group
-                                let graphResourceToGroupEdge = new Edge(groupId, graphResourceTypeNodeId);
-                                edges.push(graphResourceToGroupEdge);
-                            } else {
-                                // console.log(graphResourceTypeNodeId + "already exists");
-                            }
-
-                            // Assignment intent
-                            let assignmentIntent = null;
-                            if (assignment.target["@odata.type"]) {
-                                if (assignment.target["@odata.type"].includes("exclusion")) {
-                                    assignmentIntent = "excluded";
-                                } else {
-                                    assignmentIntent = "included"
+                                // found a new group
+                                if (groupIds.indexOf(groupId) === -1) {
+                                    groupIds.push(groupId);
                                 }
+
+                                // build Graph Resource Type Node
+                                let graphResourceTypeNodeId = graphApiResourceObject.id + "-" + groupId;
+                                if (!checkObjectWithIdExistsInArray(graphResourceTypeNodeId, graphResourceTypeNodes)) {
+                                    // node not yet created
+                                    let newGraphResourceTypeNode = new GraphResourceTypeNode(
+                                        graphApiResourceObject.displayName,
+                                        graphApiResourceObject.id,
+                                        groupId,
+                                        graphApiResourceObject.icon
+                                    );
+                                    graphResourceTypeNodes.push(newGraphResourceTypeNode);
+
+                                    // create edge from Type to Group
+                                    let graphResourceToGroupEdge = new Edge(groupId, graphResourceTypeNodeId);
+                                    edges.push(graphResourceToGroupEdge);
+                                } else {
+                                    // console.log(graphResourceTypeNodeId + "already exists");
+                                }
+
+                                // Assignment intent
+                                let assignmentIntent = null;
+                                if (assignment.target["@odata.type"]) {
+                                    if (assignment.target["@odata.type"].includes("exclusion")) {
+                                        assignmentIntent = "excluded";
+                                    } else {
+                                        assignmentIntent = "included"
+                                    }
+                                }
+
+                                if (assignment.intent) {
+                                    assignmentIntent = assignment.intent;
+                                }
+
+                                // build Graph Resource Item Node
+                                let newGraphResourceItem = new GraphResourceItemNode(
+                                    resourceItem.displayName,
+                                    resourceItem.id,
+                                    graphResourceTypeNodeId,
+                                    assignmentIntent
+                                );
+                                graphResourceItemNodes.push(newGraphResourceItem);
+
+                                // create Edge from Item to Type
+                                let graphItemToResourceTypeEdge = new Edge(graphResourceTypeNodeId, newGraphResourceItem.id,);
+                                edges.push(graphItemToResourceTypeEdge);
                             }
-
-                            if (assignment.intent) {
-                                assignmentIntent = assignment.intent;
-                            }
-
-                            // build Graph Resource Item Node
-                            let newGraphResourceItem = new GraphResourceItemNode(
-                                resourceItem.displayName,
-                                resourceItem.id,
-                                graphResourceTypeNodeId,
-                                assignmentIntent
-                            );
-                            graphResourceItemNodes.push(newGraphResourceItem);
-
-                            // create Edge from Item to Type
-                            let graphItemToResourceTypeEdge = new Edge(graphResourceTypeNodeId, newGraphResourceItem.id,);
-                            edges.push(graphItemToResourceTypeEdge);
                         }
                     }
                 }
             }
         }));
 
-        // fetch Group information
-        let groupPromises = [];
         // console.log(groupIds);
+        let groupNodes = [];
 
         for (let groupIndex = 0; groupIndex < groupIds.length; groupIndex++) {
             let graphApiGroupUrl = "groups/" + groupIds[groupIndex];
             //console.log(graphApiGroupUrl);
 
-            let graphPromise = await callMsGraph(graphApiGroupUrl);
-            groupPromises.push(graphPromise);
+            let graphData = await callMsGraph(graphApiGroupUrl);
+
+            // group might not exist anymore -> promise will return undefined
+            // set element placeholder
+            if (!graphData) {
+                graphData = {
+                    id: groupIds[groupIndex],
+                    displayName: "not available anymore"
+                }
+            }
+
+            if (graphData.id) {
+                let groupNode = new GraphGroupNode(graphData.id, graphData.displayName);
+                groupNodes.push(groupNode);
+            }
         }
-
-        // wait for all data to arrive
-        let groupData = await Promise.all(groupPromises);
-
-        // build nodes
-        let groupNodes = [];
-        groupData.forEach(element => {
-            let groupNode = new GraphGroupNode(element.id, element.displayName);
-            groupNodes.push(groupNode);
-        })
 
         // enable for debug
         /*
