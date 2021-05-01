@@ -105,12 +105,6 @@ const graphApiResources = [
         url: "deviceManagement/deviceHealthScripts?$expand=assignments",
         displayName: "Proactive Remediation - Device Health Script",
         icon: "powershell"
-    },
-    {
-        id: 11,
-        url: "deviceManagement/deviceHeadfdfdf",
-        displayName: "Proactive Remediation - Device Health Script",
-        icon: "powershell"
     }
 ]
 
